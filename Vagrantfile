@@ -12,7 +12,7 @@ MACHINES = {
               # networks
               :net => [],
               # forwarded ports
-              :forwarded_port => []
+              :forwarded_port => [],
 
               :disks => {
                 :sata1 => {
@@ -61,33 +61,35 @@ MACHINES = {
                 
           },
         }
-Vagrant.configure("2") do |config|
-  MACHINES.each do |boxname, boxconfig|
-    # Disable shared folders
-    config.vm.synced_folder ".", "/vagrant", disabled: true
-    # Apply VM config
-    config.vm.define boxname do |box|
-      # Set VM base box and hostname
-      box.vm.box = boxconfig[:box_name]
-      box.vm.host_name = boxname.to_s
-      # Additional network config if present
-      if boxconfig.key?(:net)
-        boxconfig[:net].each do |ipconf|
-          box.vm.network "private_network", ipconf
+        Vagrant.configure("2") do |config|
+
+          MACHINES.each do |boxname, boxconfig|
+        
+              config.vm.define boxname do |box|
+        
+                  box.vm.box = boxconfig[:box_name]
+                  box.vm.host_name = boxname.to_s
+                                    
+                  box.vm.provider :virtualbox do |vb|
+                        vb.customize ["modifyvm", :id, "--memory", "2048"]
+                          needsController = false
+              boxconfig[:disks].each do |dname, dconf|
+                unless File.exist?(dconf[:dfile])
+                vb.customize ['createhd', '--filename', dconf[:dfile], '--variant', 'Fixed', '--size', dconf[:size]]
+                                        needsController =  true
+                                  end
+        
+              end
+                          if needsController == true
+                             vb.customize ["storagectl", :id, "--name", "SATA", "--add", "sata" ]
+                             boxconfig[:disks].each do |dname, dconf|
+                                 vb.customize ['storageattach', :id,  '--storagectl', 'SATA', '--port', dconf[:port], '--device', 0, '--type', 'hdd', '--medium', dconf[:dfile]]
+                             end
+                          end
+                  end
+             
+          #config.vm.provision "shell", path: "script.sh"
+          
+              end
+          end
         end
-      end
-      # Port-forward config if present
-      if boxconfig.key?(:forwarded_port)
-        boxconfig[:forwarded_port].each do |port|
-          box.vm.network "forwarded_port", port
-        end
-      end
-      # VM resources config
-      box.vm.provider "virtualbox" do |v|
-        # Set VM RAM size and CPU count
-        v.memory = boxconfig[:memory]
-        v.cpus = boxconfig[:cpus]
-      end
-    end
-  end
-end

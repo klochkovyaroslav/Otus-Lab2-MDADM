@@ -1,1 +1,1 @@
-{}
+{"rsync":{"/vagrant":{"type":"rsync","guestpath":"/vagrant","hostpath":"/home/klochkov/otus-course/Otus-Lab2-MDADM","disabled":false,"__vagrantfile":true,"owner":"vagrant","group":"vagrant"}}}
