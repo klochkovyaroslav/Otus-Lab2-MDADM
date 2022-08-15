@@ -93,7 +93,7 @@ MACHINES = {
                           end
                   end
              
-          #config.vm.provision "shell", path: "raid.sh"
+          config.vm.provision "shell", path: "raid.sh"
           
               end
           end
