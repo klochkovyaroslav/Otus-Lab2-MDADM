@@ -7,3 +7,4 @@ sata6.vdi
 sata7.vdi
 sata8.vdi
 sata9.vdi
+.vagrant/*

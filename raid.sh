@@ -47,4 +47,5 @@ lsblk
  #Создаем файловую систему
  for i in $(seq 1 5); do mkfs.ext4 /dev/md/raid5p$i; done;
  mkdir -p /raid5/part{1,2,3,4,5}
+ #Монтируем партишины
  for i in $(seq 1 5); do mount /dev/md/raid5p$i /raid5/part$i; done;

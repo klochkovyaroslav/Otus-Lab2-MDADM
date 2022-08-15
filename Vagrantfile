@@ -1,4 +1,3 @@
-# -*- mode: ruby -*-
 # Describe VMs
 MACHINES = {
   # VM name "RAID-MDADM"
